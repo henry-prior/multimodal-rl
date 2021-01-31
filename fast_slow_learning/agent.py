@@ -95,6 +95,7 @@ class Agent:
         vision_dim: Tuple[int, int],
         num_embeddings: int,
         embedding_dim: int,
+        memory_hidden_dim: int,
         tokenizer: Tokenizer,
         discount: float = 0.9,
         hidden_size: int = 512,
@@ -112,7 +113,12 @@ class Agent:
             (1, *vision_dim),
         ]
         agent_params = build_fast_slow_agent_model(
-            input_dims, num_embeddings, embedding_dim, next(self.rng)
+            input_dims,
+            memory_hidden_dim,
+            embedding_dim,
+            num_embeddings,
+            embedding_dim,
+            next(self.rng),
         )
         agent_optimizer = optim.Adam(learning_rate=lr).create(agent_params)
         self.agent_optimizer = jax.device_put(agent_optimizer)

@@ -54,7 +54,6 @@ class ResNet(nn.Module):
 
         for block_size, n_channels in zip(self.block_sizes, self.channels_per_block):
             x = conv(n_channels, (3, 3), (1, 1))(x)
-            # x = nn.max_pool(x, (3, 3), strides=(2, 2), padding='SAME')
             for _ in range(block_size):
                 x = ResNetBlock(n_channels, conv=conv, activation=self.activation)(x)
 
@@ -94,7 +93,7 @@ class ResNetTranspose(nn.Module):
 
         for block_size, n_channels in zip(self.block_sizes, self.channels_per_block):
             x = conv(n_channels, (3, 3), (1, 1))(x)
-            # x = nn.max_pool(x, (3, 3), strides=(2, 2), padding='SAME')
+            # TODO: upsample
             for _ in range(block_size):
                 x = ResNetTransposeBlock(
                     n_channels, conv=conv, activation=self.activation
@@ -140,7 +139,8 @@ class DCEM(nn.Module):
     The Dual-coded Episodic Memory from figure 9 in `Grounded Language Learning
     Fast and Slow (Hill et al., 2021) <https://arxiv.org/pdf/2009.01719.pdf>`_.
 
-    Uses a transformer-based approach to attend to the language and image embeddings
+    Uses a transformer-based approach to allow the language and image embeddings
+    to attend to each other.
     """
 
     @nn.compact

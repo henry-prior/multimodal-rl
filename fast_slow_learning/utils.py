@@ -1,9 +1,10 @@
 import dm_fast_mapping
-from collections import OrderedDict
 
 import jax
 import jax.numpy as jnp
 from flax import linen as nn
+from typing import Sequence
+from typing import Tuple
 
 
 ACTION_TYPES = [
@@ -152,7 +153,13 @@ def categorical_importance_sampling_ratios(
     pi_logits: jnp.ndarray, mu_logits: jnp.ndarray, actions: jnp.ndarray
 ) -> jnp.ndarray:
     """
-    Importance sampling ratios
+    Importance sampling ratios. Calculated in log space for numerical stability.
+
+
+    Args:
+        pi_logits: logits of the target policy
+        mu_logits: logits of the behavior policy
+        actions: the actions taken by the behavior policy at each index
     """
 
     log_pi_a = jnp.take_along_axis(
@@ -198,3 +205,8 @@ def vtrace(
     q_estimate = rewards + discounts * q_bootstrap
     pg_advantages = clipped_rhos * (q_estimate - values_prev)
     return errors, pg_advantages, q_estimate
+
+
+def rescale_dims(shape: Sequence[int], along: Tuple, scale: float) -> Sequence[int]:
+    out_shape = [s * scale if idx in along else s for idx, s in enumerate(shape)]
+    return out_shape
