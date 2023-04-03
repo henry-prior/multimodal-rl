@@ -189,7 +189,7 @@ def vtrace(
     current_error = 0.0
     errors = []
     for i in jnp.arange(values.shape[0] - 1, -1, -1):
-        current_error = weighted_td_errros[i] + discounts[i] * c_t[i] * current_error
+        current_error = weighted_td_errors[i] + discounts[i] * c_t[i] * current_error
         errors.insert(0, current_error)
 
     target_prev = jnp.array(errors) + values_prev
